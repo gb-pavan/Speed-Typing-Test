@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous" />
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+    <style>@import url("https://fonts.googleapis.com/css2?family=Bree+Serif&family=Caveat:wght@400;700&family=Lobster&family=Monoton&family=Open+Sans:ital,wght@0,400;0,700;1,400;1,700&family=Playfair+Display+SC:ital,wght@0,400;0,700;1,700&family=Playfair+Display:ital,wght@0,400;0,700;1,700&family=Roboto:ital,wght@0,400;0,700;1,400;1,700&family=Source+Sans+Pro:ital,wght@0,400;0,700;1,700&family=Work+Sans:ital,wght@0,400;0,700;1,700&display=swap");
+
+.bg-container {
+    background-color: #dac0ff;
+    height: 600px;
+    background-size: cover;
+}
+
+.main-heading {
+    color: #690cb0;
+    font-weight: 700;
+    font-size: 50px;
+}
+
+.number-size {
+    font-size: 30px;
+}
+
+.box {
+    border-radius: 20px;
+    background-color: #f3eaff;
+    height: 40%;
+    border-style: solid;
+    border-color: #9aa5b1;
+    border-width: 1px;
+
+}
+
+.sub-box {
+    width: 90%;
+}
+
+.btn-bx {
+    background-color: #690cb0;
+    color: white;
+}
+
+.btn-bx2 {
+    background-color: white;
+    color: black;
+    font-weight: 600;
+    border-radius: 10px;
+}</style>
+</head>
+
+<body>
+    <div class="bg-container p-3" id="speedTypingTest">
+        <h1 class="main-heading">Speed Typing Test</h1>
+        <p>On your fingers lets set Go!</p>
+        <div class="d-flex flex-row">
+            <img src="https://assets.ccbp.in/frontend/dynamic-webapps/clock-img.png" height="40px" width="40px" class="mt-2" />
+            <p id="timer" class="number-size pl-5">0</p>
+        </div>
+        <div class="box mt-4 pl-4 pt-3">
+            <div class="d-none" id="spinner">
+                <div class="d-flex justify-content-center">
+                    <div class="spinner-border" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                </div>
+            </div>
+            <p id="quoteDisplay"></p>
+            <textarea class="sub-box" id="quoteInput" placeholder="Type here!!"></textarea>
+        </div>
+        <p id="result"></p>
+        <button class="btn btn-bx" id="submitBtn">submit</button>
+        <button class="btn btn-bx2 ml-4" id="resetBtn">Reset</button>
+    </div>
+    <script>
+        let quoteDisplayEl = document.getElementById("quoteDisplay");
+        let submitBtnEl = document.getElementById("submitBtn");
+        let timerEl = document.getElementById("timer");
+        let resultEl = document.getElementById("result");
+        let quoteInputEl = document.getElementById("quoteInput");
+        let resetBtnEl = document.getElementById("resetBtn");
+        let spinnerEl = document.getElementById("spinner");
+        let timerId = null;
+        let
+            options = {
+                method: "GET"
+            };
+
+        function fetchQuote() {
+            quoteDisplayEl.textContent = "";
+            spinnerEl.classList.remove("d-none");
+            fetch("https://apis.ccbp.in/random-quote", options)
+                .then(function(response) {
+                    return response.json();
+                })
+                .then(function(text) {
+                    spinnerEl.classList.add("d-none");
+                    quoteDisplayEl.textContent = text.content;
+                });
+        }
+
+
+        function start() {
+            let counter = timerEl.textContent;
+            timerId = setInterval(function() {
+                counter = parseInt(counter) + 1;
+                timerEl.textContent = counter + " seconds";
+            }, 1000);
+        }
+
+        quoteInputEl.addEventListener("click", start);
+        fetchQuote();
+
+        submitBtnEl.addEventListener("click", function() {
+            if (quoteDisplayEl.textContent === quoteInputEl.value) {
+                clearInterval(timerId);
+                resultEl.textContent = "You typed in " + timerEl.textContent;
+            } else {
+                clearInterval(timerId);
+                //timerEl.textContent = 0;
+                resultEl.textContent = "You typed incorrect sentence";
+            }
+        });
+        resetBtnEl.addEventListener("click", function() {
+            quoteInputEl.value = "";
+            clearInterval(timerId);
+            timerEl.textContent = 0;
+            fetchQuote();
+        });
+    </script>
+</body>
+
+</html>
